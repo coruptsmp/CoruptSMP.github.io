@@ -268,7 +268,9 @@ h1.titulo {
   background: rgba(0,0,0,.28);
   border: 3px dashed #5a5a5a;
   color: var(--texto-suave);
+  text-decoration: none;
 }
+.hueco:hover { border-color: var(--diamante); color: var(--texto); }
 .hueco:first-child { grid-column: span 2; grid-row: span 2; min-height: 292px; }
 .hueco b { font-family: var(--fuente-pixel); font-weight: 400; font-size: 60px; line-height: .7; color: #6b6b6b; }
 
@@ -455,16 +457,16 @@ footer p { max-width: none; }
       <p class="mas">…y muchos más disponibles en el juego.</p>
     </div>
 
-    <!-- GALERÍA: cuando tengas capturas, cambia un <div class="hueco"> por <img src="foto.jpg" alt="..."> -->
+    <!-- GALERÍA: cuando tengas capturas, cambia un <a class="hueco"> por <img src="foto.jpg" alt="..."> -->
     <div class="bloque">
       <h2>Galería de la comunidad</h2>
       <div class="galeria">
-        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
-        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
-        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
-        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
-        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
-        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
+        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
+        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
+        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
+        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
+        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
       </div>
     </div>
 
@@ -472,10 +474,10 @@ footer p { max-width: none; }
     <div class="bloque">
       <h2>Soporte</h2>
       <div class="contacto bisel">
-        <p>¿Algo no funciona o quieres avisar de un problema? Escríbeme por Discord.</p>
-        <button class="btn btn-discord-wiki" id="btn-reportar" type="button">Reportar un problema / Contactar en Discord</button>
+        <p>¿Algo no funciona o quieres avisar de un problema? Entra al Discord de la comunidad y escríbeme.</p>
+        <a class="btn" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer">Reportar un problema / Contactar en Discord</a>
         <p class="usuario">Usuario: <span class="discord-user"></span></p>
-        <p class="pronto">El servidor de Discord de la comunidad: Próximamente.</p>
+        <p class="pronto">También puedes subir tus capturas a la galería desde ahí.</p>
       </div>
     </div>
 
@@ -510,7 +512,7 @@ footer p { max-width: none; }
         <!-- MÉTODOS DE PAGO -->
         <p class="pagos">De momento los pagos de apoyo se gestionan manualmente en metálico o criptomonedas. Próximamente la tienda estará automatizada en plataformas como Tebex.</p>
 
-        <button class="btn btn-discord" id="btn-apoyar" type="button">Contactar con <span class="discord-user"></span> en Discord para apoyar al servidor</button>
+        <a class="btn btn-discord" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer">Contactar con <span class="discord-user"></span> en Discord para apoyar al servidor</a>
       </div>
 
     </div>
@@ -533,7 +535,12 @@ footer p { max-width: none; }
 const IP_JAVA         = 'Paypal-mazda.gl.joinmc.link';
 const IP_BEDROCK      = 'vans-checkout.tun.ply.gg:36961';
 const USUARIO_DISCORD = 'mmoloren';
+const DISCORD_URL     = 'https://discord.gg/gGR4HqHfug';   // enlace de invitación (todos los botones de Discord)
+const NOMBRE_SERVIDOR = 'coruptSMP';                        // nombre que sale en el widget de estado
+
+// El estado del servidor se consulta con la misma IP Java de arriba (IP_JAVA).
 const FECHA_INICIO    = { anio: 2025, mes: 9, dia: 1 };   // 1 de septiembre de 2025 (mes de 1 a 12)
+const EDICION_CONSULTA = 'java';                            // 'java' o 'bedrock' (según la IP que se consulte)
 const REFRESCO_MS     = 60000;                            // cada cuánto se actualiza el estado (1 min)
 
 /* =====================================================================
@@ -634,13 +641,11 @@ document.getElementById('btn-java').addEventListener('click', () => copiar(IP_JA
 document.getElementById('btn-bedrock').addEventListener('click', () => copiar(IP_BEDROCK, '¡IP Bedrock Copiada!'));
 document.getElementById('btn-apoyo').addEventListener('click', () => { location.hash = 'premium'; });
 
-// Botones de Discord: no hay enlace todavía, así que copian el usuario
-const avisoDiscord = () => copiar(USUARIO_DISCORD, 'Usuario copiado: ' + USUARIO_DISCORD);
-document.getElementById('btn-reportar').addEventListener('click', avisoDiscord);
-document.getElementById('btn-apoyar').addEventListener('click', avisoDiscord);
+// Todos los enlaces de Discord apuntan a DISCORD_URL (editable arriba)
+document.querySelectorAll('[data-discord]').forEach(a => { a.href = DISCORD_URL; });
 
 /* =====================================================================
-   WIDGET DE ESTADO (API gratuita mcsrvstat.us)
+   WIDGET DE ESTADO (API gratuita de mcstatus.io)
    ===================================================================== */
 // Convierte el MOTD en HTML de la API a nodos seguros (solo colores, negrita y cursiva)
 function pintarMotd(contenedor, lineasHtml) {
@@ -669,16 +674,24 @@ function pintarMotd(contenedor, lineasHtml) {
 function pintarEstado(d) {
   const chip = document.getElementById('est-chip');
   const icono = document.getElementById('est-icono');
-  icono.src = d.icon || window.ICONO_POR_DEFECTO;
-  document.getElementById('est-nombre').textContent = d.hostname || IP_JAVA;
+  // mcstatus.io devuelve el icono como "data:image/png;base64,..." (o null si no hay)
+  let ic = d.icon || '';
+  if (ic && !ic.startsWith('data:')) ic = 'data:image/png;base64,' + ic;
+  icono.src = ic || window.ICONO_POR_DEFECTO;
+  document.getElementById('est-nombre').textContent = NOMBRE_SERVIDOR;
 
   if (d.online) {
     chip.textContent = 'ONLINE';  chip.className = 'chip on';
     const p = d.players || {};
     document.getElementById('est-jugadores').textContent = (p.online ?? 0) + '/' + (p.max ?? '?');
-    const motd = d.motd && d.motd.html && d.motd.html.length ? d.motd.html : ['coruptSMP'];
-    pintarMotd(document.getElementById('est-motd'), motd);
-    document.getElementById('est-version').textContent = d.version ? 'Versión ' + d.version : '';
+    // El MOTD llega como un único texto HTML; se parte en líneas por los saltos (<br> o \n)
+    const crudo = d.motd && d.motd.html;
+    let lineas = Array.isArray(crudo) ? crudo : String(crudo || '').split(/<br\s*\/?>|\n/i);
+    lineas = lineas.filter(l => l.trim() !== '');
+    pintarMotd(document.getElementById('est-motd'), lineas.length ? lineas : [NOMBRE_SERVIDOR]);
+    // Versión: según la edición, el nombre viene en un campo u otro
+    const v = d.version && (d.version.name_clean || (typeof d.version.name === 'string' ? d.version.name : d.version.name && d.version.name.clean));
+    document.getElementById('est-version').textContent = v ? 'Versión ' + v : '';
   } else {
     chip.textContent = 'OFFLINE'; chip.className = 'chip off';
     document.getElementById('est-jugadores').textContent = '—';
@@ -689,7 +702,8 @@ function pintarEstado(d) {
 
 async function actualizarEstado() {
   try {
-    const r = await fetch('https://api.mcsrvstat.us/3/' + encodeURIComponent(IP_JAVA));
+    const dir = encodeURIComponent(IP_JAVA).replace('%3A', ':');
+    const r = await fetch('https://api.mcstatus.io/v2/status/' + EDICION_CONSULTA + '/' + dir + '?query=false');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     pintarEstado(await r.json());
   } catch (e) {
