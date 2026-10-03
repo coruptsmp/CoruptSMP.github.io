@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>coruptSMP</title>
+<meta name="description" content="Servidor de Minecraft coruptSMP: IPs, normas, comandos y apoyo al servidor.">
+
+<!-- Favicon: un bloque de hierba dibujado en SVG (no hace falta subir ningún archivo) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%236b4a2f'/%3E%3Crect width='16' height='5' fill='%2352a33a'/%3E%3Crect x='3' y='9' width='3' height='3' fill='%23553b25'/%3E%3Crect x='10' y='7' width='3' height='3' fill='%23553b25'/%3E%3C/svg%3E">
+
+<!-- Fuente píxel para títulos (VT323). El texto largo usa Segoe UI / Arial del sistema -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   1. COLORES Y VARIABLES  → aquí cambias la paleta de toda la web
+   ===================================================================== */
+:root {
+  --fondo:        #2b2b2b;   /* gris piedra oscura (se cubre con la textura de JS) */
+  --panel:        #3a3a3a;   /* fondo de las cajas */
+  --negro:        #101010;   /* bordes y cajas tipo lista de servidores */
+  --bisel-claro:  #5d5d5d;   /* borde iluminado (arriba-izquierda) */
+  --bisel-oscuro: #1c1c1c;   /* borde en sombra (abajo-derecha) */
+  --texto:        #e2e2e2;
+  --texto-suave:  #a6a6a6;
+
+  --esmeralda:    #17dd62;   /* verde del ítem esmeralda de Minecraft */
+  --esmeralda-os: #0c7a35;
+  --diamante:     #4aedd9;   /* azul del ítem diamante */
+  --oro:          #ffaa00;   /* dorado de Minecraft */
+  --rojo:         #e0453a;
+
+  --fuente-pixel: 'VT323', 'Courier New', monospace;
+  --fuente-texto: 'Segoe UI', Arial, sans-serif;
+}
+
+/* =====================================================================
+   2. BASE
+   ===================================================================== */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--fondo);
+  background-image: var(--tex-piedra, none);   /* la textura la genera el JS */
+  background-size: 64px 64px;
+  image-rendering: pixelated;
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+h1, h2, h3 {
+  font-family: var(--fuente-pixel);
+  font-weight: 400;
+  line-height: 1;
+  margin: 0;
+  text-shadow: 3px 3px 0 #000;
+}
+h2 { font-size: 46px; }
+h3 { font-size: 30px; }
+p  { margin: 0 0 1em; max-width: 62ch; }
+code, kbd { font-family: var(--fuente-pixel); }
+
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--diamante);
+  outline-offset: 3px;
+}
+
+/* Biselado estilo menú de Minecraft: borde negro + luz arriba/izquierda + sombra abajo/derecha */
+.bisel {
+  border: 3px solid #000;
+  box-shadow:
+    inset 3px 3px 0 var(--bisel-claro),
+    inset -3px -3px 0 var(--bisel-oscuro);
+}
+
+/* =====================================================================
+   3. CABECERA Y NAVEGACIÓN (3 pestañas)
+   ===================================================================== */
+.cabecera {
+  position: relative;
+  background-color: #4a3523;                 /* tierra */
+  background-image: var(--tex-tierra, none);
+  background-size: 64px 64px;
+  border-bottom: 3px solid #000;
+  padding-bottom: 8px;                       /* hueco para la franja de hierba */
+}
+.cabecera::after {                           /* franja de hierba bajo la cabecera */
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -3px; height: 10px;
+  background-color: #3f7d2c;
+  background-image: var(--tex-hierba, none);
+  background-size: 40px 40px;
+  background-position: 0 -4px;
+  border-bottom: 3px solid #000;
+}
+.cabecera-in {
+  max-width: 1080px; margin: 0 auto;
+  padding: 14px 20px 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px 24px; flex-wrap: wrap;
+}
+.marca {
+  font-family: var(--fuente-pixel);
+  font-size: 34px; line-height: 1;
+  text-shadow: 3px 3px 0 #000;
+  color: #fff;
+}
+.nav { display: flex; gap: 8px; }
+
+/* Botón estilo Minecraft (gris, biselado) */
+.btn {
+  font-family: var(--fuente-pixel);
+  font-size: 26px; line-height: 1;
+  color: #fff; text-shadow: 2px 2px 0 #222;
+  background: #636363;
+  border: 3px solid #000;
+  box-shadow: inset 3px 3px 0 #8f8f8f, inset -3px -3px 0 #3a3a3a;
+  padding: 11px 18px 9px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn:hover { background: #727c8c; border-color: #fff; }
+.btn:active { box-shadow: inset 3px 3px 0 #3a3a3a, inset -3px -3px 0 #8f8f8f; padding-top: 13px; padding-bottom: 7px; }
+
+.nav .btn[aria-selected="true"] {            /* pestaña activa: hundida y verde */
+  background: #2c6b3b;
+  box-shadow: inset 3px 3px 0 #1a4424, inset -3px -3px 0 #46a05a;
+}
+
+/* =====================================================================
+   4. CONTENEDOR PRINCIPAL
+   ===================================================================== */
+main { max-width: 1080px; margin: 0 auto; padding: 48px 20px 64px; }
+
+/* =====================================================================
+   5. INICIO
+   ===================================================================== */
+.inicio {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 40px 48px;
+  align-items: start;
+}
+
+h1.titulo {
+  font-family: var(--fuente-pixel);
+  font-weight: 400;
+  font-size: clamp(64px, 14vw, 132px);
+  line-height: .85;
+  margin: 0 0 22px -3px;
+  color: #fff;
+  /* sombra dura en dos capas, como el texto del logo de Minecraft */
+  text-shadow: 5px 5px 0 #3b3b3b, 8px 8px 0 #000;
+  letter-spacing: 1px;
+}
+.desde { margin: 0; color: var(--texto-suave); }
+.dias {
+  font-family: var(--fuente-pixel);
+  font-size: 40px; line-height: 1.1;
+  color: var(--esmeralda);
+  text-shadow: 3px 3px 0 #000;
+  margin: 2px 0 34px;
+}
+
+.ips { display: grid; gap: 14px; max-width: 520px; }
+.btn-ip {
+  font-size: 27px; text-align: left;
+  padding: 16px 18px 13px;
+  overflow-wrap: anywhere;
+  animation: brillo 2.6s ease-in-out infinite;
+}
+.btn-ip.java    { background: #3f7f2e; box-shadow: inset 3px 3px 0 #6cb752, inset -3px -3px 0 #25511a; }
+.btn-ip.bedrock { background: #1f7f87; box-shadow: inset 3px 3px 0 #4ec6cf, inset -3px -3px 0 #114b51; }
+.btn-ip.java:hover    { background: #4a9636; }
+.btn-ip.bedrock:hover { background: #2796a0; }
+.btn-ip.bedrock { animation-delay: 1.3s; }
+.btn-ip small { display: block; font-family: var(--fuente-texto); font-size: 13px; text-shadow: none; opacity: .85; margin-top: 6px; }
+
+/* Pulso suave: solo sube y baja el brillo del botón */
+@keyframes brillo {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.22); }
+}
+
+/* --- Widget de estado: imita una fila de la lista de servidores del juego --- */
+.estado { background: var(--panel); padding: 14px; }
+.mc-fila {
+  display: flex; gap: 14px;
+  background: #000; padding: 10px; border: 2px solid #2a2a2a;
+}
+.mc-icono { width: 64px; height: 64px; flex: none; image-rendering: pixelated; background: #222; }
+.mc-datos { min-width: 0; flex: 1; font-family: var(--fuente-pixel); font-size: 24px; line-height: 1.05; }
+.mc-arriba { display: flex; justify-content: space-between; gap: 10px; color: #fff; margin-bottom: 4px; }
+.mc-arriba span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-jug { color: #aaa; flex: none; }
+.mc-motd { color: #aaa; overflow-wrap: anywhere; }
+.mc-motd div { min-height: 1em; }
+
+.estado-pie {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px 16px; flex-wrap: wrap;
+  margin-top: 12px;
+  font-family: var(--fuente-pixel); font-size: 24px;
+}
+.chip { display: inline-flex; align-items: center; gap: 9px; color: var(--texto-suave); }
+.chip::before { content: ""; width: 13px; height: 13px; background: currentColor; border: 2px solid #000; }
+.chip.on  { color: var(--esmeralda); }
+.chip.off { color: var(--rojo); }
+.ver { color: var(--texto-suave); font-size: 21px; }
+
+/* --- Botón grande de apoyo (verde esmeralda) --- */
+.btn-apoyo {
+  display: block; width: 100%;
+  margin-top: 16px;
+  padding: 20px 14px 17px;
+  font-size: clamp(27px, 4.4vw, 34px);
+  color: #06210f; text-shadow: none;
+  background: var(--esmeralda);
+  box-shadow: inset 4px 4px 0 #8dfab1, inset -4px -4px 0 var(--esmeralda-os);
+  animation: brillo 2.2s ease-in-out infinite;
+}
+.btn-apoyo:hover { background: #3cf17c; border-color: #fff; }
+.btn-apoyo:active { box-shadow: inset 4px 4px 0 var(--esmeralda-os), inset -4px -4px 0 #8dfab1; }
+
+/* =====================================================================
+   6. WIKI
+   ===================================================================== */
+.bloque { margin-bottom: 56px; }
+.bloque > h2 { margin-bottom: 18px; }
+
+.normas { list-style: none; margin: 0; padding: 0; max-width: 700px; }
+.normas li {
+  display: flex; gap: 18px; align-items: baseline;
+  padding: 16px 18px;
+  background: var(--panel);
+  border: 3px solid #000;
+  box-shadow: inset 3px 3px 0 var(--bisel-claro), inset -3px -3px 0 var(--bisel-oscuro);
+}
+.normas li + li { margin-top: 10px; }
+.normas .n { font-family: var(--fuente-pixel); font-size: 44px; line-height: .8; color: var(--oro); text-shadow: 3px 3px 0 #000; }
+.normas p { margin: 0; }
+
+.comandos { display: grid; gap: 0; max-width: 700px; background: var(--negro); padding: 6px 18px; border: 3px solid #000; }
+.cmd { display: grid; grid-template-columns: 11ch 1fr; gap: 6px 20px; align-items: baseline; padding: 11px 0; border-bottom: 2px solid #262626; }
+.cmd:last-of-type { border-bottom: 0; }
+.cmd code { font-size: 28px; color: var(--diamante); white-space: nowrap; }
+.cmd span { color: var(--texto); }
+.mas { margin: 14px 0 0; color: var(--texto-suave); }
+
+/* Galería: marcos vacíos; el primero es más grande */
+.galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.hueco {
+  min-height: 140px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  text-align: center; padding: 14px;
+  background: rgba(0,0,0,.28);
+  border: 3px dashed #5a5a5a;
+  color: var(--texto-suave);
+}
+.hueco:first-child { grid-column: span 2; grid-row: span 2; min-height: 292px; }
+.hueco b { font-family: var(--fuente-pixel); font-weight: 400; font-size: 60px; line-height: .7; color: #6b6b6b; }
+
+.contacto { background: var(--panel); padding: 22px; max-width: 700px; }
+.contacto p { max-width: none; }
+.contacto .btn { display: block; width: 100%; font-size: 28px; padding: 16px 12px 13px; background: #4b5fa8; box-shadow: inset 3px 3px 0 #7d8fd6, inset -3px -3px 0 #2c3a73; }
+.contacto .btn:hover { background: #5a70c4; border-color: #fff; }
+.usuario { margin: 16px 0 4px; font-family: var(--fuente-pixel); font-size: 30px; color: var(--diamante); }
+.pronto { margin: 0; color: var(--texto-suave); font-size: 15px; }
+
+/* =====================================================================
+   7. PREMIUM
+   ===================================================================== */
+.premium { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.5fr); gap: 36px 48px; align-items: start; }
+.premium h2 { font-size: clamp(54px, 9vw, 84px); }
+
+.sinlucro {
+  border-left: 8px solid var(--esmeralda);
+  background: rgba(0,0,0,.35);
+  padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.sinlucro h3 { color: var(--esmeralda); margin-bottom: 10px; }
+.sinlucro p:last-child { margin-bottom: 0; }
+
+.beneficios { background: var(--panel); padding: 22px 22px 14px; margin-bottom: 28px; }
+.beneficios h3 { margin-bottom: 14px; }
+.beneficios ul { list-style: none; margin: 0; padding: 0; }
+.beneficios li { position: relative; padding: 0 0 14px 30px; }
+.beneficios li::before {                       /* viñeta cuadrada (un “píxel” de esmeralda) */
+  content: ""; position: absolute; left: 0; top: .5em; width: 14px; height: 14px;
+  background: var(--esmeralda); border: 2px solid #000; box-shadow: inset 2px 2px 0 #8dfab1;
+}
+
+.pagos { color: var(--texto-suave); border-top: 3px solid #000; padding-top: 18px; margin-bottom: 26px; }
+.btn-discord { display: block; width: 100%; font-size: clamp(24px, 4vw, 30px); padding: 18px 14px 15px; background: #4b5fa8; box-shadow: inset 3px 3px 0 #7d8fd6, inset -3px -3px 0 #2c3a73; }
+.btn-discord:hover { background: #5a70c4; border-color: #fff; }
+
+/* =====================================================================
+   8. PIE, AVISO FLOTANTE (toast)
+   ===================================================================== */
+footer { max-width: 1080px; margin: 0 auto; padding: 0 20px 40px; color: var(--texto-suave); font-size: 14px; }
+footer p { max-width: none; }
+
+#toast {
+  position: fixed; left: 50%; bottom: 28px;
+  transform: translate(-50%, 24px);
+  background: #101010; color: #fff;
+  font-family: var(--fuente-pixel); font-size: 28px; line-height: 1;
+  padding: 13px 20px 11px;
+  border: 3px solid var(--esmeralda);
+  box-shadow: 4px 4px 0 #000;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s steps(3), transform .15s steps(3);
+  z-index: 50; max-width: calc(100vw - 32px); text-align: center;
+}
+#toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+/* =====================================================================
+   9. RESPONSIVO (móvil / tablet)
+   ===================================================================== */
+@media (max-width: 860px) {
+  .inicio, .premium { grid-template-columns: 1fr; }
+  main { padding-top: 36px; }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .cabecera-in { justify-content: center; }
+  .nav { width: 100%; }
+  .nav .btn { flex: 1; padding-left: 6px; padding-right: 6px; font-size: 25px; }
+  h2 { font-size: 40px; }
+  .galeria { grid-template-columns: 1fr 1fr; }
+  .hueco:first-child { grid-column: span 2; grid-row: auto; min-height: 180px; }
+  .cmd { grid-template-columns: 1fr; gap: 0; }
+  .mc-datos { font-size: 22px; }
+}
+
+/* Si el sistema pide menos movimiento, se apagan los pulsos */
+@media (prefers-reduced-motion: reduce) {
+  .btn-ip, .btn-apoyo { animation: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================================
+     CABECERA + PESTAÑAS
+     ===================================================================== -->
+<header class="cabecera">
+  <div class="cabecera-in">
+    <div class="marca">coruptSMP</div>
+    <nav class="nav" role="tablist" aria-label="Secciones">
+      <button class="btn" role="tab" data-tab="inicio"  aria-selected="true">Inicio</button>
+      <button class="btn" role="tab" data-tab="wiki"    aria-selected="false">Wiki</button>
+      <button class="btn" role="tab" data-tab="premium" aria-selected="false">Premium</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================================================================
+       SECCIÓN: INICIO
+       =================================================================== -->
+  <section id="sec-inicio" role="tabpanel" data-panel="inicio">
+    <div class="inicio">
+
+      <!-- Columna izquierda: título, contador e IPs -->
+      <div>
+        <h1 class="titulo">coruptSMP</h1>
+        <p class="desde">Mapa iniciado en Septiembre de 2025</p>
+        <!-- El número lo calcula el JavaScript (ver FECHA_INICIO más abajo) -->
+        <p class="dias">Días en línea: <span id="num-dias">…</span></p>
+
+        <div class="ips">
+          <!-- Textos de los botones de IP: se rellenan desde las constantes del JS -->
+          <button class="btn btn-ip java" id="btn-java" type="button">
+            IP Java: <span id="txt-ip-java"></span>
+            <small>Toca para copiar</small>
+          </button>
+          <button class="btn btn-ip bedrock" id="btn-bedrock" type="button">
+            IP Bedrock: <span id="txt-ip-bedrock"></span>
+            <small>Toca para copiar</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Columna derecha: estado del servidor + botón de apoyo justo debajo -->
+      <div>
+        <div class="estado bisel" id="estado" aria-live="polite">
+          <div class="mc-fila">
+            <img class="mc-icono" id="est-icono" alt="Icono del servidor" width="64" height="64">
+            <div class="mc-datos">
+              <div class="mc-arriba">
+                <span id="est-nombre">coruptSMP</span>
+                <span class="mc-jug" id="est-jugadores">…/…</span>
+              </div>
+              <div class="mc-motd" id="est-motd">Consultando el servidor…</div>
+            </div>
+          </div>
+          <div class="estado-pie">
+            <span class="chip" id="est-chip">Comprobando</span>
+            <span class="ver" id="est-version"></span>
+          </div>
+        </div>
+
+        <!-- Este botón activa la pestaña Premium -->
+        <button class="btn btn-apoyo" id="btn-apoyo" type="button">💎 ¡Apoya al Servidor / Obtén Premium!</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       SECCIÓN: WIKI
+       =================================================================== -->
+  <section id="sec-wiki" role="tabpanel" data-panel="wiki" hidden>
+
+    <!-- NORMAS: edita aquí el texto de las reglas -->
+    <div class="bloque">
+      <h2>Normas</h2>
+      <ol class="normas">
+        <li>
+          <span class="n">1</span>
+          <p>Prohibido tirar el servidor o realizar acciones que saturen el rendimiento.</p>
+        </li>
+        <li>
+          <span class="n">2</span>
+          <p>Prohibido usar hacks o exploits que puedan fastidiar la experiencia de otros jugadores.</p>
+        </li>
+      </ol>
+    </div>
+
+    <!-- COMANDOS: añade más filas copiando un bloque <div class="cmd"> -->
+    <div class="bloque">
+      <h2>Comandos útiles</h2>
+      <div class="comandos">
+        <div class="cmd"><code>/home</code><span>Te teletransporta a tu casa.</span></div>
+        <div class="cmd"><code>/warp spawn</code><span>Te lleva al spawn.</span></div>
+        <div class="cmd"><code>/back</code><span>Te devuelve a tu posición anterior.</span></div>
+      </div>
+      <p class="mas">…y muchos más disponibles en el juego.</p>
+    </div>
+
+    <!-- GALERÍA: cuando tengas capturas, cambia un <div class="hueco"> por <img src="foto.jpg" alt="..."> -->
+    <div class="bloque">
+      <h2>Galería de la comunidad</h2>
+      <div class="galeria">
+        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+        <div class="hueco"><b>+</b>¡Sube tu captura en Discord!</div>
+      </div>
+    </div>
+
+    <!-- SOPORTE / CONTACTO -->
+    <div class="bloque">
+      <h2>Soporte</h2>
+      <div class="contacto bisel">
+        <p>¿Algo no funciona o quieres avisar de un problema? Escríbeme por Discord.</p>
+        <button class="btn btn-discord-wiki" id="btn-reportar" type="button">Reportar un problema / Contactar en Discord</button>
+        <p class="usuario">Usuario: <span class="discord-user"></span></p>
+        <p class="pronto">El servidor de Discord de la comunidad: Próximamente.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================================================================
+       SECCIÓN: PREMIUM
+       =================================================================== -->
+  <section id="sec-premium" role="tabpanel" data-panel="premium" hidden>
+    <div class="premium">
+
+      <h2>Premium</h2>
+
+      <div>
+        <!-- MENSAJE NON-PROFIT -->
+        <div class="sinlucro">
+          <h3>Proyecto sin fines de lucro</h3>
+          <p>coruptSMP no es un negocio. Todo el dinero que se recauda con las conexiones Premium se destina única y exclusivamente a pagar el mantenimiento del servidor para que siga online.</p>
+          <p>El administrador no obtiene ningún beneficio económico personal.</p>
+        </div>
+
+        <!-- BENEFICIOS -->
+        <div class="beneficios bisel">
+          <h3>Qué recibes al apoyar</h3>
+          <ul>
+            <li>Conexión ultrarrápida al servidor.</li>
+            <li>Acceso a 3 /home en lugar de solo 1.</li>
+            <li>Acceso exclusivo a funciones experimentales del juego.</li>
+          </ul>
+        </div>
+
+        <!-- MÉTODOS DE PAGO -->
+        <p class="pagos">De momento los pagos de apoyo se gestionan manualmente en metálico o criptomonedas. Próximamente la tienda estará automatizada en plataformas como Tebex.</p>
+
+        <button class="btn btn-discord" id="btn-apoyar" type="button">Contactar con <span class="discord-user"></span> en Discord para apoyar al servidor</button>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>coruptSMP es un proyecto de la comunidad y no está afiliado a Mojang ni a Microsoft. Minecraft es una marca de Mojang Synergies AB.</p>
+</footer>
+
+<!-- Aviso flotante ("¡IP Java Copiada!", etc.) -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN  → lo que probablemente vayas a editar
+   ===================================================================== */
+const IP_JAVA         = 'Paypal-mazda.gl.joinmc.link';
+const IP_BEDROCK      = 'vans-checkout.tun.ply.gg:36961';
+const USUARIO_DISCORD = 'mmoloren';
+const FECHA_INICIO    = { anio: 2025, mes: 9, dia: 1 };   // 1 de septiembre de 2025 (mes de 1 a 12)
+const REFRESCO_MS     = 60000;                            // cada cuánto se actualiza el estado (1 min)
+
+/* =====================================================================
+   TEXTURAS  → se generan por código (nada de imágenes externas)
+   Cada textura es un mosaico de 16x16 píxeles con ruido, como los bloques del juego.
+   ===================================================================== */
+function aleatorio(semilla) {                     // generador con semilla: siempre sale igual
+  return function () {
+    semilla |= 0; semilla = semilla + 0x6D2B79F5 | 0;
+    let t = Math.imul(semilla ^ semilla >>> 15, 1 | semilla);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function crearMosaico(base, variacion, semilla, filasHierba) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 16;
+  const x = c.getContext('2d');
+  const r = aleatorio(semilla);
+  for (let py = 0; py < 16; py++) {
+    for (let px = 0; px < 16; px++) {
+      const v = (r() - 0.5) * 2 * variacion;
+      let col = base;
+      // En el bloque de hierba, las primeras filas se pintan de verde
+      if (filasHierba && py < filasHierba) col = [64, 118, 44];
+      x.fillStyle = `rgb(${col.map(n => Math.max(0, Math.min(255, Math.round(n + v)))).join(',')})`;
+      x.fillRect(px, py, 1, 1);
+    }
+  }
+  return c.toDataURL();
+}
+(function aplicarTexturas() {
+  const raiz = document.documentElement.style;
+  raiz.setProperty('--tex-piedra', `url(${crearMosaico([50, 50, 50], 9, 7)})`);
+  raiz.setProperty('--tex-tierra', `url(${crearMosaico([78, 56, 38], 14, 21)})`);
+  raiz.setProperty('--tex-hierba', `url(${crearMosaico([62, 120, 44], 18, 5)})`);
+  // Icono por defecto del servidor (bloque de hierba) por si la API no devuelve ninguno
+  window.ICONO_POR_DEFECTO = crearMosaico([78, 56, 38], 14, 33, 4);
+})();
+
+/* =====================================================================
+   UTILIDADES: aviso flotante y copiar al portapapeles
+   ===================================================================== */
+let temporizadorToast;
+function mostrarAviso(texto) {
+  const t = document.getElementById('toast');
+  t.textContent = texto;
+  t.classList.add('visible');
+  clearTimeout(temporizadorToast);
+  temporizadorToast = setTimeout(() => t.classList.remove('visible'), 2200);
+}
+async function copiar(texto, aviso) {
+  try {
+    await navigator.clipboard.writeText(texto);
+  } catch (e) {
+    // Plan B para navegadores sin permiso de portapapeles
+    const ta = document.createElement('textarea');
+    ta.value = texto; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    ta.remove();
+  }
+  mostrarAviso(aviso);
+}
+
+/* =====================================================================
+   PESTAÑAS (Inicio / Wiki / Premium)  → usan la URL (#wiki, #premium)
+   ===================================================================== */
+const PESTANAS = ['inicio', 'wiki', 'premium'];
+function activarPestana(nombre) {
+  if (!PESTANAS.includes(nombre)) nombre = 'inicio';
+  document.querySelectorAll('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== nombre; });
+  document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === nombre));
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+document.querySelectorAll('[data-tab]').forEach(b => {
+  b.addEventListener('click', () => { location.hash = b.dataset.tab; });
+});
+window.addEventListener('hashchange', () => activarPestana(location.hash.slice(1)));
+
+/* =====================================================================
+   INICIO: textos de IP, contador de días y botones
+   ===================================================================== */
+document.getElementById('txt-ip-java').textContent = IP_JAVA;
+document.getElementById('txt-ip-bedrock').textContent = IP_BEDROCK;
+document.querySelectorAll('.discord-user').forEach(e => e.textContent = USUARIO_DISCORD);
+
+// Contador: días desde la fecha de inicio hasta hoy (según el reloj del visitante)
+(function contarDias() {
+  const hoy = new Date();
+  const msHoy    = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+  const msInicio = Date.UTC(FECHA_INICIO.anio, FECHA_INICIO.mes - 1, FECHA_INICIO.dia);
+  const dias = Math.max(0, Math.floor((msHoy - msInicio) / 86400000));
+  document.getElementById('num-dias').textContent = dias.toLocaleString('es-ES');
+})();
+
+document.getElementById('btn-java').addEventListener('click', () => copiar(IP_JAVA, '¡IP Java Copiada!'));
+document.getElementById('btn-bedrock').addEventListener('click', () => copiar(IP_BEDROCK, '¡IP Bedrock Copiada!'));
+document.getElementById('btn-apoyo').addEventListener('click', () => { location.hash = 'premium'; });
+
+// Botones de Discord: no hay enlace todavía, así que copian el usuario
+const avisoDiscord = () => copiar(USUARIO_DISCORD, 'Usuario copiado: ' + USUARIO_DISCORD);
+document.getElementById('btn-reportar').addEventListener('click', avisoDiscord);
+document.getElementById('btn-apoyar').addEventListener('click', avisoDiscord);
+
+/* =====================================================================
+   WIDGET DE ESTADO (API gratuita mcsrvstat.us)
+   ===================================================================== */
+// Convierte el MOTD en HTML de la API a nodos seguros (solo colores, negrita y cursiva)
+function pintarMotd(contenedor, lineasHtml) {
+  contenedor.textContent = '';
+  const limpiar = (origen, destino) => {
+    origen.childNodes.forEach(n => {
+      if (n.nodeType === 3) { destino.appendChild(document.createTextNode(n.textContent)); return; }
+      if (n.nodeType !== 1) return;
+      const s = document.createElement('span');
+      const estilo = n.getAttribute('style') || '';
+      const color = estilo.match(/(?:^|;)\s*color:\s*(#[0-9a-f]{3,6})\b/i);
+      if (color) s.style.color = color[1];
+      if (/^(b|strong)$/i.test(n.tagName) || /font-weight:\s*bold/i.test(estilo)) s.style.fontWeight = 'bold';
+      if (/^(i|em)$/i.test(n.tagName) || /font-style:\s*italic/i.test(estilo)) s.style.fontStyle = 'italic';
+      limpiar(n, s);
+      destino.appendChild(s);
+    });
+  };
+  lineasHtml.forEach(l => {
+    const fila = document.createElement('div');
+    limpiar(new DOMParser().parseFromString(l, 'text/html').body, fila);
+    contenedor.appendChild(fila);
+  });
+}
+
+function pintarEstado(d) {
+  const chip = document.getElementById('est-chip');
+  const icono = document.getElementById('est-icono');
+  icono.src = d.icon || window.ICONO_POR_DEFECTO;
+  document.getElementById('est-nombre').textContent = d.hostname || IP_JAVA;
+
+  if (d.online) {
+    chip.textContent = 'ONLINE';  chip.className = 'chip on';
+    const p = d.players || {};
+    document.getElementById('est-jugadores').textContent = (p.online ?? 0) + '/' + (p.max ?? '?');
+    const motd = d.motd && d.motd.html && d.motd.html.length ? d.motd.html : ['coruptSMP'];
+    pintarMotd(document.getElementById('est-motd'), motd);
+    document.getElementById('est-version').textContent = d.version ? 'Versión ' + d.version : '';
+  } else {
+    chip.textContent = 'OFFLINE'; chip.className = 'chip off';
+    document.getElementById('est-jugadores').textContent = '—';
+    pintarMotd(document.getElementById('est-motd'), ['El servidor está apagado o no responde ahora mismo.']);
+    document.getElementById('est-version').textContent = '';
+  }
+}
+
+async function actualizarEstado() {
+  try {
+    const r = await fetch('https://api.mcsrvstat.us/3/' + encodeURIComponent(IP_JAVA));
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    pintarEstado(await r.json());
+  } catch (e) {
+    const chip = document.getElementById('est-chip');
+    chip.textContent = 'Sin datos'; chip.className = 'chip';
+    document.getElementById('est-icono').src = window.ICONO_POR_DEFECTO;
+    pintarMotd(document.getElementById('est-motd'), ['No se pudo consultar el estado. Prueba a recargar la página.']);
+  }
+}
+actualizarEstado();
+setInterval(actualizarEstado, REFRESCO_MS);
+
+/* =====================================================================
+   ARRANQUE: abre la pestaña que indique la URL (#wiki, #premium…)
+   ===================================================================== */
+activarPestana(location.hash.slice(1));
+</script>
+</body>
+</html>
