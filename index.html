@@ -84,7 +84,7 @@ a:focus-visible, button:focus-visible {
 }
 
 /* =====================================================================
-   3. CABECERA Y NAVEGACIÓN (3 pestañas)
+   3. CABECERA Y NAVEGACIÓN (pestañas)
    ===================================================================== */
 .cabecera {
   position: relative;
@@ -310,8 +310,13 @@ h1.titulo {
 .btn-discord { display: block; width: 100%; font-size: clamp(24px, 4vw, 30px); padding: 18px 14px 15px; background: #4b5fa8; box-shadow: inset 3px 3px 0 #7d8fd6, inset -3px -3px 0 #2c3a73; }
 .btn-discord:hover { background: #5a70c4; border-color: #fff; }
 
+.precio { display: flex; align-items: baseline; gap: 10px; line-height: 1; }
+.precio b { font-family: var(--fuente-pixel); font-weight: 400; font-size: 68px; color: var(--oro); text-shadow: 3px 3px 0 #000; }
+.precio span { font-family: var(--fuente-pixel); font-size: 30px; color: var(--texto); }
+.precio-nota { margin: 6px 0 18px; padding-bottom: 16px; border-bottom: 2px solid var(--bisel-oscuro); color: var(--texto-suave); }
+
 /* =====================================================================
-   7b. COMUNIDAD: botón de Discord, eventos y fotos
+   8. COMUNIDAD: botón de Discord, eventos y fotos
    ===================================================================== */
 .btn-grande {
   font-size: clamp(28px, 5vw, 36px);
@@ -363,7 +368,7 @@ h1.titulo {
 }
 
 /* =====================================================================
-   7c. AGRADECIMIENTO A JUGADORES PREMIUM (inicio) y PRECIO (premium)
+   9. AGRADECIMIENTO A JUGADORES PREMIUM (página de inicio)
    ===================================================================== */
 .gracias { grid-column: 1 / -1; margin-top: 8px; padding-top: 30px; border-top: 3px solid #000; }
 .gracias h2 { font-size: 42px; margin-bottom: 8px; }
@@ -380,18 +385,12 @@ h1.titulo {
 .jug b { display: block; font-family: var(--fuente-pixel); font-weight: 400; font-size: 30px; line-height: 1; color: #fff; text-shadow: 2px 2px 0 #000; overflow-wrap: anywhere; }
 .jug small { display: block; margin-top: 2px; font-family: var(--fuente-pixel); font-size: 21px; line-height: 1; color: var(--oro); }
 
-.precio { display: flex; align-items: baseline; gap: 10px; line-height: 1; }
-.precio b { font-family: var(--fuente-pixel); font-weight: 400; font-size: 68px; color: var(--oro); text-shadow: 3px 3px 0 #000; }
-.precio span { font-family: var(--fuente-pixel); font-size: 30px; color: var(--texto); }
-.precio-nota { margin: 6px 0 18px; padding-bottom: 16px; border-bottom: 2px solid var(--bisel-oscuro); color: var(--texto-suave); }
-
-footer a { color: var(--diamante); }
-
 /* =====================================================================
-   8. PIE, AVISO FLOTANTE (toast)
+   10. PIE Y AVISO FLOTANTE (toast)
    ===================================================================== */
 footer { max-width: 1080px; margin: 0 auto; padding: 0 20px 40px; color: var(--texto-suave); font-size: 14px; }
 footer p { max-width: none; }
+footer a { color: var(--diamante); }
 
 #toast {
   position: fixed; left: 50%; bottom: 28px;
@@ -408,7 +407,7 @@ footer p { max-width: none; }
 #toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
 /* =====================================================================
-   9. RESPONSIVO (móvil / tablet)
+   11. RESPONSIVO (móvil / tablet)
    ===================================================================== */
 @media (max-width: 860px) {
   .inicio, .premium { grid-template-columns: 1fr; }
@@ -631,50 +630,46 @@ footer p { max-width: none; }
 <!-- Aviso flotante ("¡IP Java Copiada!", etc.) -->
 <div id="toast" role="status" aria-live="polite"></div>
 
-
 <script>
 /* =====================================================================
-   CONFIGURACIÓN  → lo que probablemente vayas a editar
+   CONFIGURACIÓN GENERAL  → datos del servidor y de la web
    ===================================================================== */
 const IP_JAVA         = 'Paypal-mazda.gl.joinmc.link';
 const IP_BEDROCK      = 'vans-checkout.tun.ply.gg:36961';
 const USUARIO_DISCORD = 'mmoloren';
-const DISCORD_URL     = 'https://discord.gg/gGR4HqHfug';   // enlace de invitación (todos los botones de Discord)
+const DISCORD_URL     = 'https://discord.gg/gGR4HqHfug';   // invitación usada por todos los botones de Discord
 const NOMBRE_SERVIDOR = 'coruptSMP';                        // nombre que sale en el widget de estado
+const FECHA_INICIO    = { anio: 2025, mes: 9, dia: 1 };     // contador de días (mes de 1 a 12)
 
-// El estado del servidor se consulta con la misma IP Java de arriba (IP_JAVA).
-const FECHA_INICIO    = { anio: 2025, mes: 9, dia: 1 };   // 1 de septiembre de 2025 (mes de 1 a 12)
-const EDICION_CONSULTA = 'java';                            // 'java' o 'bedrock' (según la IP que se consulte)
-const REFRESCO_MS     = 60000;                            // cada cuánto se actualiza el estado (1 min)
+// Estado del servidor (mcstatus.io): se consulta IP_JAVA cada REFRESCO_MS milisegundos
+const EDICION_CONSULTA = 'java';                            // 'java' o 'bedrock'
+const REFRESCO_MS      = 60000;                             // 60000 = 1 minuto
 
 /* =====================================================================
-   EVENTOS Y FOTOS  → aquí añades contenido a la pestaña Comunidad
+   CONTENIDO QUE EDITAS  → eventos, fotos y jugadores Premium
+   Cada elemento es una línea entre llaves { } terminada en coma.
    ===================================================================== */
-// EVENTOS: una línea por evento. 'fecha' en formato AAAA-MM-DD; 'hora' es opcional.
-// Los que ya pasaron se mueven solos a "Anteriores". Ejemplo (quita las // para usarlo):
+
+// EVENTOS (pestaña Comunidad). 'hora' es opcional. Los ya pasados bajan solos a "Anteriores".
+// Ejemplo, quita las // del principio para activarlo:
 const EVENTOS = [
   // { fecha: '2026-11-07', hora: '20:00', titulo: 'Nombre del evento', descripcion: 'Qué se hace y cómo participar.' },
 ];
 
-// FOTOS: sube la imagen a la carpeta fotos/ del repositorio y añade una línea. 'pie' es opcional.
+// FOTOS (pestaña Comunidad). Sube antes la imagen a la carpeta fotos/ del repositorio. 'pie' es opcional.
 const FOTOS = [
   // { archivo: 'fotos/mi-base.jpg', pie: 'Base de Fulano' },
 ];
-const HUECOS_MINIMOS = 6;   // si hay pocas fotos, se rellenan marcos vacíos hasta este número
+const HUECOS_MINIMOS = 6;   // si hay menos fotos, se rellena con marcos vacíos hasta este número
 
-// JUGADORES_PREMIUM: los que salen en el agradecimiento de la página de inicio.
-//  - 'nombre'  es el nombre que se muestra y, por defecto, el que se usa para buscar la cabeza.
-//  - 'skin'    (opcional) nombre o UUID de una cuenta oficial de Minecraft cuya skin quieres mostrar.
-//              Útil con cuentas no oficiales: si su nombre no existe en Mojang, MCHeads muestra
-//              una skin por defecto (Steve/Alex), y con 'skin' puedes elegir otra.
-//  - 'imagen'  (opcional) ruta de una imagen propia, p. ej. 'fotos/cabeza-fulano.png'. Tiene prioridad.
+// JUGADORES PREMIUM (agradecimiento de la página de inicio).
+//   nombre  → nombre que se muestra; también se usa para buscar la cabeza en MCHeads
+//   skin    → (opcional) nombre o UUID de otra cuenta oficial cuya skin se mostrará
+//   imagen  → (opcional) imagen propia, p. ej. 'fotos/cabeza.png'; tiene prioridad sobre las demás
 const JUGADORES_PREMIUM = [
-  // { nombre: 'Jugador1' },
-  // { nombre: 'Jugador2', skin: 'OtroNombreOUUID' },
-  // { nombre: 'Jugador3', imagen: 'fotos/cabeza-jugador3.png' },
+  { nombre: 'mmXDnos' },
+  { nombre: 'FractaliXx_' },
 ];
-
-
 
 /* =====================================================================
    TEXTURAS  → se generan por código (nada de imágenes externas)
@@ -740,7 +735,7 @@ async function copiar(texto, aviso) {
 }
 
 /* =====================================================================
-   PESTAÑAS (Inicio / Wiki / Premium)  → usan la URL (#wiki, #premium)
+   PESTAÑAS (Inicio / Wiki / Comunidad / Premium)  → usan la URL (#wiki, #comunidad…)
    ===================================================================== */
 const PESTANAS = ['inicio', 'wiki', 'comunidad', 'premium'];
 function activarPestana(nombre) {
@@ -956,7 +951,7 @@ actualizarEstado();
 setInterval(actualizarEstado, REFRESCO_MS);
 
 /* =====================================================================
-   ARRANQUE: abre la pestaña que indique la URL (#wiki, #premium…)
+   ARRANQUE: abre la pestaña que indique la URL (#wiki, #comunidad…)
    ===================================================================== */
 activarPestana(location.hash.slice(1));
 </script>
