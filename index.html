@@ -271,7 +271,7 @@ h1.titulo {
   text-decoration: none;
 }
 .hueco:hover { border-color: var(--diamante); color: var(--texto); }
-.hueco:first-child { grid-column: span 2; grid-row: span 2; min-height: 292px; }
+.galeria > :first-child { grid-column: span 2; grid-row: span 2; min-height: 292px; }
 .hueco b { font-family: var(--fuente-pixel); font-weight: 400; font-size: 60px; line-height: .7; color: #6b6b6b; }
 
 .contacto { background: var(--panel); padding: 22px; max-width: 700px; }
@@ -280,6 +280,7 @@ h1.titulo {
 .contacto .btn:hover { background: #5a70c4; border-color: #fff; }
 .usuario { margin: 16px 0 4px; font-family: var(--fuente-pixel); font-size: 30px; color: var(--diamante); }
 .pronto { margin: 0; color: var(--texto-suave); font-size: 15px; }
+.pronto a { color: var(--diamante); }
 
 /* =====================================================================
    7. PREMIUM
@@ -308,6 +309,83 @@ h1.titulo {
 .pagos { color: var(--texto-suave); border-top: 3px solid #000; padding-top: 18px; margin-bottom: 26px; }
 .btn-discord { display: block; width: 100%; font-size: clamp(24px, 4vw, 30px); padding: 18px 14px 15px; background: #4b5fa8; box-shadow: inset 3px 3px 0 #7d8fd6, inset -3px -3px 0 #2c3a73; }
 .btn-discord:hover { background: #5a70c4; border-color: #fff; }
+
+/* =====================================================================
+   7b. COMUNIDAD: botón de Discord, eventos y fotos
+   ===================================================================== */
+.btn-grande {
+  font-size: clamp(28px, 5vw, 36px);
+  padding: 22px 14px 19px;
+  max-width: 560px;
+  animation: brillo 2.6s ease-in-out infinite;
+}
+
+.evento {
+  display: flex; gap: 18px; align-items: flex-start;
+  max-width: 700px; padding: 14px 16px;
+  background: var(--panel);
+  border: 3px solid #000;
+  box-shadow: inset 3px 3px 0 var(--bisel-claro), inset -3px -3px 0 var(--bisel-oscuro);
+}
+.evento + .evento { margin-top: 10px; }
+.evento-fecha {
+  flex: none; width: 66px; padding: 8px 0 6px; text-align: center;
+  background: #000; border: 2px solid #2a2a2a;
+  font-family: var(--fuente-pixel); line-height: 1;
+}
+.evento-fecha .dia { display: block; font-size: 42px; color: var(--oro); }
+.evento-fecha .mes { display: block; font-size: 22px; color: var(--texto-suave); text-transform: uppercase; }
+.evento-cuerpo { min-width: 0; }
+.evento-cuerpo h3 { font-size: 30px; margin-bottom: 4px; }
+.evento-cuerpo p { margin: 0 0 6px; }
+.evento-meta { font-family: var(--fuente-pixel); font-size: 22px; color: var(--diamante); }
+.evento.pasado { opacity: .55; }
+.evento.pasado .dia, .evento.pasado .evento-meta { color: var(--texto-suave); }
+.subtitulo { margin: 30px 0 12px; font-size: 26px; color: var(--texto-suave); }
+.vacio {
+  max-width: 700px; padding: 20px;
+  border: 3px dashed #5a5a5a; background: rgba(0,0,0,.28);
+  color: var(--texto-suave);
+}
+.vacio p { margin: 0; max-width: none; }
+.vacio a { color: var(--diamante); }
+
+/* Foto real dentro de la galería */
+.foto {
+  position: relative; margin: 0; min-height: 140px;
+  border: 3px solid #000; background: #000; overflow: hidden;
+}
+.foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.foto figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 6px 10px 4px; background: rgba(0,0,0,.7);
+  font-family: var(--fuente-pixel); font-size: 22px; line-height: 1.05; color: #fff;
+}
+
+/* =====================================================================
+   7c. AGRADECIMIENTO A JUGADORES PREMIUM (inicio) y PRECIO (premium)
+   ===================================================================== */
+.gracias { grid-column: 1 / -1; margin-top: 8px; padding-top: 30px; border-top: 3px solid #000; }
+.gracias h2 { font-size: 42px; margin-bottom: 8px; }
+.gracias > p { color: var(--texto-suave); margin-bottom: 22px; }
+.lista-premium { display: flex; flex-wrap: wrap; gap: 14px; }
+.jug {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 22px 10px 10px;
+  background: var(--panel);
+  border: 3px solid #000;
+  box-shadow: inset 3px 3px 0 var(--bisel-claro), inset -3px -3px 0 var(--bisel-oscuro);
+}
+.jug img { width: 56px; height: 56px; display: block; image-rendering: pixelated; background: #000; border: 2px solid #000; }
+.jug b { display: block; font-family: var(--fuente-pixel); font-weight: 400; font-size: 30px; line-height: 1; color: #fff; text-shadow: 2px 2px 0 #000; overflow-wrap: anywhere; }
+.jug small { display: block; margin-top: 2px; font-family: var(--fuente-pixel); font-size: 21px; line-height: 1; color: var(--oro); }
+
+.precio { display: flex; align-items: baseline; gap: 10px; line-height: 1; }
+.precio b { font-family: var(--fuente-pixel); font-weight: 400; font-size: 68px; color: var(--oro); text-shadow: 3px 3px 0 #000; }
+.precio span { font-family: var(--fuente-pixel); font-size: 30px; color: var(--texto); }
+.precio-nota { margin: 6px 0 18px; padding-bottom: 16px; border-bottom: 2px solid var(--bisel-oscuro); color: var(--texto-suave); }
+
+footer a { color: var(--diamante); }
 
 /* =====================================================================
    8. PIE, AVISO FLOTANTE (toast)
@@ -340,17 +418,18 @@ footer p { max-width: none; }
   body { font-size: 16px; }
   .cabecera-in { justify-content: center; }
   .nav { width: 100%; }
-  .nav .btn { flex: 1; padding-left: 6px; padding-right: 6px; font-size: 25px; }
+  .nav { gap: 5px; }
+  .nav .btn { flex: 1; min-width: 0; padding-left: 3px; padding-right: 3px; font-size: 22px; }
   h2 { font-size: 40px; }
   .galeria { grid-template-columns: 1fr 1fr; }
-  .hueco:first-child { grid-column: span 2; grid-row: auto; min-height: 180px; }
+  .galeria > :first-child { grid-column: span 2; grid-row: auto; min-height: 180px; }
   .cmd { grid-template-columns: 1fr; gap: 0; }
   .mc-datos { font-size: 22px; }
 }
 
 /* Si el sistema pide menos movimiento, se apagan los pulsos */
 @media (prefers-reduced-motion: reduce) {
-  .btn-ip, .btn-apoyo { animation: none; }
+  .btn-ip, .btn-apoyo, .btn-grande { animation: none; }
   html { scroll-behavior: auto; }
 }
 </style>
@@ -367,6 +446,7 @@ footer p { max-width: none; }
     <nav class="nav" role="tablist" aria-label="Secciones">
       <button class="btn" role="tab" data-tab="inicio"  aria-selected="true">Inicio</button>
       <button class="btn" role="tab" data-tab="wiki"    aria-selected="false">Wiki</button>
+      <button class="btn" role="tab" data-tab="comunidad" aria-selected="false">Comunidad</button>
       <button class="btn" role="tab" data-tab="premium" aria-selected="false">Premium</button>
     </nav>
   </div>
@@ -423,6 +503,14 @@ footer p { max-width: none; }
         <button class="btn btn-apoyo" id="btn-apoyo" type="button">💎 ¡Apoya al Servidor / Obtén Premium!</button>
       </div>
 
+      <!-- AGRADECIMIENTO A JUGADORES PREMIUM: se rellena desde la lista JUGADORES_PREMIUM del JS.
+           Si la lista está vacía, esta sección no se muestra. -->
+      <div class="gracias" id="gracias" hidden>
+        <h2>Gracias, jugadores Premium</h2>
+        <p>Estas personas apoyan el servidor y ayudan a que siga online.</p>
+        <div class="lista-premium" id="lista-premium"></div>
+      </div>
+
     </div>
   </section>
 
@@ -457,19 +545,6 @@ footer p { max-width: none; }
       <p class="mas">…y muchos más disponibles en el juego.</p>
     </div>
 
-    <!-- GALERÍA: cuando tengas capturas, cambia un <a class="hueco"> por <img src="foto.jpg" alt="..."> -->
-    <div class="bloque">
-      <h2>Galería de la comunidad</h2>
-      <div class="galeria">
-        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
-        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
-        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
-        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
-        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
-        <a class="hueco" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer"><b>+</b>¡Sube tu captura en Discord!</a>
-      </div>
-    </div>
-
     <!-- SOPORTE / CONTACTO -->
     <div class="bloque">
       <h2>Soporte</h2>
@@ -477,8 +552,33 @@ footer p { max-width: none; }
         <p>¿Algo no funciona o quieres avisar de un problema? Entra al Discord de la comunidad y escríbeme.</p>
         <a class="btn" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer">Reportar un problema / Contactar en Discord</a>
         <p class="usuario">Usuario: <span class="discord-user"></span></p>
-        <p class="pronto">También puedes subir tus capturas a la galería desde ahí.</p>
+        <p class="pronto">Capturas y eventos: mira la pestaña <a href="#comunidad">Comunidad</a>.</p>
       </div>
+    </div>
+
+  </section>
+
+  <!-- ===================================================================
+       SECCIÓN: COMUNIDAD (Discord, eventos y galería)
+       =================================================================== -->
+  <section id="sec-comunidad" role="tabpanel" data-panel="comunidad" hidden>
+
+    <div class="bloque">
+      <h2>Comunidad</h2>
+      <p>En el Discord se avisa de los eventos, se comparten capturas y se resuelven dudas. Entra y di hola.</p>
+      <a class="btn btn-discord btn-grande" data-discord href="https://discord.gg/gGR4HqHfug" target="_blank" rel="noopener noreferrer">Unirse al Discord</a>
+    </div>
+
+    <!-- EVENTOS: se rellenan desde la lista EVENTOS del JavaScript -->
+    <div class="bloque">
+      <h2>Eventos</h2>
+      <div id="eventos"></div>
+    </div>
+
+    <!-- GALERÍA: se rellena desde la lista FOTOS del JavaScript (los huecos vacíos salen solos) -->
+    <div class="bloque">
+      <h2>Galería</h2>
+      <div class="galeria" id="galeria"></div>
     </div>
 
   </section>
@@ -501,6 +601,9 @@ footer p { max-width: none; }
 
         <!-- BENEFICIOS -->
         <div class="beneficios bisel">
+          <!-- PRECIO: cámbialo aquí si algún día sube o baja -->
+          <div class="precio"><b>2 €</b><span>al mes</span></div>
+          <p class="precio-nota">Menos que un café, y todo va a mantener el servidor.</p>
           <h3>Qué recibes al apoyar</h3>
           <ul>
             <li>Conexión ultrarrápida al servidor.</li>
@@ -522,6 +625,7 @@ footer p { max-width: none; }
 
 <footer>
   <p>coruptSMP es un proyecto de la comunidad y no está afiliado a Mojang ni a Microsoft. Minecraft es una marca de Mojang Synergies AB.</p>
+  <p>Gracias a <a href="https://mc-heads.net" target="_blank" rel="noopener noreferrer">MCHeads</a> por los avatares de Minecraft.</p>
 </footer>
 
 <!-- Aviso flotante ("¡IP Java Copiada!", etc.) -->
@@ -542,6 +646,35 @@ const NOMBRE_SERVIDOR = 'coruptSMP';                        // nombre que sale e
 const FECHA_INICIO    = { anio: 2025, mes: 9, dia: 1 };   // 1 de septiembre de 2025 (mes de 1 a 12)
 const EDICION_CONSULTA = 'java';                            // 'java' o 'bedrock' (según la IP que se consulte)
 const REFRESCO_MS     = 60000;                            // cada cuánto se actualiza el estado (1 min)
+
+/* =====================================================================
+   EVENTOS Y FOTOS  → aquí añades contenido a la pestaña Comunidad
+   ===================================================================== */
+// EVENTOS: una línea por evento. 'fecha' en formato AAAA-MM-DD; 'hora' es opcional.
+// Los que ya pasaron se mueven solos a "Anteriores". Ejemplo (quita las // para usarlo):
+const EVENTOS = [
+  // { fecha: '2026-11-07', hora: '20:00', titulo: 'Nombre del evento', descripcion: 'Qué se hace y cómo participar.' },
+];
+
+// FOTOS: sube la imagen a la carpeta fotos/ del repositorio y añade una línea. 'pie' es opcional.
+const FOTOS = [
+  // { archivo: 'fotos/mi-base.jpg', pie: 'Base de Fulano' },
+];
+const HUECOS_MINIMOS = 6;   // si hay pocas fotos, se rellenan marcos vacíos hasta este número
+
+// JUGADORES_PREMIUM: los que salen en el agradecimiento de la página de inicio.
+//  - 'nombre'  es el nombre que se muestra y, por defecto, el que se usa para buscar la cabeza.
+//  - 'skin'    (opcional) nombre o UUID de una cuenta oficial de Minecraft cuya skin quieres mostrar.
+//              Útil con cuentas no oficiales: si su nombre no existe en Mojang, MCHeads muestra
+//              una skin por defecto (Steve/Alex), y con 'skin' puedes elegir otra.
+//  - 'imagen'  (opcional) ruta de una imagen propia, p. ej. 'fotos/cabeza-fulano.png'. Tiene prioridad.
+const JUGADORES_PREMIUM = [
+  // { nombre: 'Jugador1' },
+  // { nombre: 'Jugador2', skin: 'OtroNombreOUUID' },
+  // { nombre: 'Jugador3', imagen: 'fotos/cabeza-jugador3.png' },
+];
+
+
 
 /* =====================================================================
    TEXTURAS  → se generan por código (nada de imágenes externas)
@@ -609,7 +742,7 @@ async function copiar(texto, aviso) {
 /* =====================================================================
    PESTAÑAS (Inicio / Wiki / Premium)  → usan la URL (#wiki, #premium)
    ===================================================================== */
-const PESTANAS = ['inicio', 'wiki', 'premium'];
+const PESTANAS = ['inicio', 'wiki', 'comunidad', 'premium'];
 function activarPestana(nombre) {
   if (!PESTANAS.includes(nombre)) nombre = 'inicio';
   document.querySelectorAll('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== nombre; });
@@ -643,6 +776,112 @@ document.getElementById('btn-apoyo').addEventListener('click', () => { location.
 
 // Todos los enlaces de Discord apuntan a DISCORD_URL (editable arriba)
 document.querySelectorAll('[data-discord]').forEach(a => { a.href = DISCORD_URL; });
+
+/* =====================================================================
+   COMUNIDAD: pinta los eventos y la galería a partir de las listas de arriba
+   ===================================================================== */
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+function crearEvento(e, pasado, msHoy) {
+  const art = document.createElement('article');
+  art.className = 'evento' + (pasado ? ' pasado' : '');
+
+  const f = document.createElement('div'); f.className = 'evento-fecha';
+  const dia = document.createElement('span'); dia.className = 'dia'; dia.textContent = e.d;
+  const mes = document.createElement('span'); mes.className = 'mes'; mes.textContent = MESES[e.m - 1];
+  f.append(dia, mes);
+
+  const c = document.createElement('div'); c.className = 'evento-cuerpo';
+  const h = document.createElement('h3'); h.textContent = e.titulo;
+  c.appendChild(h);
+  if (e.descripcion) { const p = document.createElement('p'); p.textContent = e.descripcion; c.appendChild(p); }
+
+  const dif = Math.round((e.ms - msHoy) / 86400000);
+  const cuando = dif < 0 ? 'Finalizado' : dif === 0 ? 'Hoy' : dif === 1 ? 'Mañana' : 'En ' + dif + ' días';
+  const meta = document.createElement('div'); meta.className = 'evento-meta';
+  meta.textContent = (e.hora ? e.hora + ' · ' : '') + cuando;
+  c.appendChild(meta);
+
+  art.append(f, c);
+  return art;
+}
+
+function pintarEventos() {
+  const caja = document.getElementById('eventos');
+  caja.textContent = '';
+  const hoy = new Date();
+  const msHoy = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+  const lista = EVENTOS.map(e => {
+    const [y, m, d] = e.fecha.split('-').map(Number);
+    return Object.assign({}, e, { y, m, d, ms: Date.UTC(y, m - 1, d) });
+  });
+  const proximos = lista.filter(e => e.ms >= msHoy).sort((a, b) => a.ms - b.ms);
+  const pasados  = lista.filter(e => e.ms <  msHoy).sort((a, b) => b.ms - a.ms).slice(0, 5);
+
+  if (proximos.length) {
+    proximos.forEach(e => caja.appendChild(crearEvento(e, false, msHoy)));
+  } else {
+    const v = document.createElement('div'); v.className = 'vacio';
+    const p = document.createElement('p');
+    p.textContent = 'Ahora mismo no hay eventos programados. Los avisos se publican en el ';
+    const a = document.createElement('a');
+    a.href = DISCORD_URL; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Discord';
+    p.append(a, '.');
+    v.appendChild(p); caja.appendChild(v);
+  }
+  if (pasados.length) {
+    const t = document.createElement('h3'); t.className = 'subtitulo'; t.textContent = 'Anteriores';
+    caja.appendChild(t);
+    pasados.forEach(e => caja.appendChild(crearEvento(e, true, msHoy)));
+  }
+}
+
+function pintarGaleria() {
+  const g = document.getElementById('galeria');
+  g.textContent = '';
+  FOTOS.forEach(f => {
+    const fig = document.createElement('figure'); fig.className = 'foto';
+    const img = document.createElement('img');
+    img.src = f.archivo; img.loading = 'lazy'; img.alt = f.pie || 'Captura de la comunidad';
+    fig.appendChild(img);
+    if (f.pie) { const cap = document.createElement('figcaption'); cap.textContent = f.pie; fig.appendChild(cap); }
+    g.appendChild(fig);
+  });
+  for (let i = FOTOS.length; i < HUECOS_MINIMOS; i++) {
+    const a = document.createElement('a');
+    a.className = 'hueco'; a.href = DISCORD_URL; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    const mas = document.createElement('b'); mas.textContent = '+';
+    a.append(mas, '¡Sube tu captura en Discord!');
+    g.appendChild(a);
+  }
+}
+pintarEventos();
+pintarGaleria();
+
+/* =====================================================================
+   AGRADECIMIENTO PREMIUM: cabezas desde la API de MCHeads (mc-heads.net)
+   ===================================================================== */
+function pintarPremium() {
+  if (!JUGADORES_PREMIUM.length) return;            // sin jugadores, la sección sigue oculta
+  const lista = document.getElementById('lista-premium');
+  lista.textContent = '';
+  JUGADORES_PREMIUM.forEach(j => {
+    const fila = document.createElement('div'); fila.className = 'jug';
+    const img = document.createElement('img');
+    img.alt = 'Cabeza de ' + j.nombre; img.width = 56; img.height = 56;
+    img.src = j.imagen || 'https://mc-heads.net/avatar/' + encodeURIComponent(j.skin || j.nombre) + '/112';
+    // Si la imagen falla (API caída, nombre raro…), se pone el bloque por defecto
+    img.addEventListener('error', () => { if (img.src !== window.ICONO_POR_DEFECTO) img.src = window.ICONO_POR_DEFECTO; });
+    const txt = document.createElement('div');
+    const n = document.createElement('b'); n.textContent = j.nombre;
+    const t = document.createElement('small'); t.textContent = 'Premium';
+    txt.append(n, t);
+    fila.append(img, txt);
+    lista.appendChild(fila);
+  });
+  document.getElementById('gracias').hidden = false;
+}
+pintarPremium();
 
 /* =====================================================================
    WIDGET DE ESTADO (API gratuita de mcstatus.io)
