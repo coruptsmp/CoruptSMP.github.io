@@ -258,6 +258,7 @@ h1.titulo {
 .cmd code { font-size: 28px; color: var(--diamante); white-space: nowrap; }
 .cmd span { color: var(--texto); }
 .mas { margin: 14px 0 0; color: var(--texto-suave); }
+.mas a { color: var(--diamante); }
 
 /* Galería: marcos vacíos; el primero es más grande */
 .galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -574,10 +575,11 @@ footer a { color: var(--diamante); }
       <div id="eventos"></div>
     </div>
 
-    <!-- GALERÍA: se rellena desde la lista FOTOS del JavaScript (los huecos vacíos salen solos) -->
+    <!-- GALERÍA: se rellena desde la lista FOTOS del JavaScript (fotos al azar; los marcos vacíos salen solos) -->
     <div class="bloque">
       <h2>Galería</h2>
       <div class="galeria" id="galeria"></div>
+      <p class="mas" id="mas-fotos" hidden>¿Quieres ver más fotos? Están todas en el <a id="enlace-fotos" target="_blank" rel="noopener noreferrer">repositorio de GitHub</a>.</p>
     </div>
 
   </section>
@@ -640,6 +642,7 @@ const USUARIO_DISCORD = 'mmoloren';
 const DISCORD_URL     = 'https://discord.gg/gGR4HqHfug';   // invitación usada por todos los botones de Discord
 const NOMBRE_SERVIDOR = 'coruptSMP';                        // nombre que sale en el widget de estado
 const FECHA_INICIO    = { anio: 2025, mes: 9, dia: 1 };     // contador de días (mes de 1 a 12)
+const REPO_FOTOS_URL  = 'https://github.com/coruptsmp/CoruptSMP.github.io/tree/main/fotos';   // carpeta de fotos en GitHub
 
 // Estado del servidor (mcstatus.io): se consulta IP_JAVA cada REFRESCO_MS milisegundos
 const EDICION_CONSULTA = 'java';                            // 'java' o 'bedrock'
@@ -657,11 +660,12 @@ const EVENTOS = [
 ];
 
 // FOTOS (pestaña Comunidad). Sube antes la imagen a la carpeta fotos/ del repositorio. 'pie' es opcional.
-const FOTOS = [ 
-   { archivo: 'fotos/Aldea_og.jpg', pie: 'Aldea og' },
+// En cada visita se eligen al azar FOTOS_VISIBLES de esta lista; si hay menos, el resto son marcos vacíos.
+const FOTOS = [
+  { archivo: 'fotos/Aldea_og.jpg' },
   // { archivo: 'fotos/mi-base.jpg', pie: 'Base de Fulano' },
 ];
-const HUECOS_MINIMOS = 6;   // si hay menos fotos, se rellena con marcos vacíos hasta este número
+const FOTOS_VISIBLES = 6;   // cuántos marcos tiene la galería
 
 // JUGADORES PREMIUM (agradecimiento de la página de inicio).
 //   nombre  → nombre que se muestra; también se usa para buscar la cabeza en MCHeads
@@ -832,10 +836,21 @@ function pintarEventos() {
   }
 }
 
+// Mezcla una copia de la lista (Fisher-Yates) para que el orden cambie en cada visita
+function barajar(lista) {
+  const a = lista.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function pintarGaleria() {
   const g = document.getElementById('galeria');
   g.textContent = '';
-  FOTOS.forEach(f => {
+  const elegidas = barajar(FOTOS).slice(0, FOTOS_VISIBLES);
+  elegidas.forEach(f => {
     const fig = document.createElement('figure'); fig.className = 'foto';
     const img = document.createElement('img');
     img.src = f.archivo; img.loading = 'lazy'; img.alt = f.pie || 'Captura de la comunidad';
@@ -843,12 +858,18 @@ function pintarGaleria() {
     if (f.pie) { const cap = document.createElement('figcaption'); cap.textContent = f.pie; fig.appendChild(cap); }
     g.appendChild(fig);
   });
-  for (let i = FOTOS.length; i < HUECOS_MINIMOS; i++) {
+  // Marcos vacíos hasta completar la galería
+  for (let i = elegidas.length; i < FOTOS_VISIBLES; i++) {
     const a = document.createElement('a');
     a.className = 'hueco'; a.href = DISCORD_URL; a.target = '_blank'; a.rel = 'noopener noreferrer';
     const mas = document.createElement('b'); mas.textContent = '+';
     a.append(mas, '¡Sube tu captura en Discord!');
     g.appendChild(a);
+  }
+  // Enlace al repositorio con todas las fotos (solo si hay alguna)
+  if (FOTOS.length) {
+    document.getElementById('enlace-fotos').href = REPO_FOTOS_URL;
+    document.getElementById('mas-fotos').hidden = false;
   }
 }
 pintarEventos();
