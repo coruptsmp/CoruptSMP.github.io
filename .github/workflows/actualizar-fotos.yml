@@ -1,0 +1,40 @@
+# Actualiza la galería de la web cada vez que se suben o borran fotos en la carpeta fotos/.
+# Archivo: .github/workflows/actualizar-fotos.yml
+name: Actualizar galería de fotos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fotos/**'
+  workflow_dispatch:        # permite lanzarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: write           # necesario para que el bot pueda guardar el index.html actualizado
+
+concurrency:
+  group: actualizar-fotos
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Regenerar la lista de fotos en index.html
+        run: python3 scripts/actualizar_fotos.py index.html
+
+      - name: Guardar los cambios (si los hay)
+        run: |
+          if git diff --quiet; then
+            echo "La galería ya estaba al día."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "Actualizar galería de fotos (automático)"
+            git pull --rebase origin main
+            git push
+          fi
