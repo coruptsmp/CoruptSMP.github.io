@@ -659,12 +659,14 @@ const EVENTOS = [
   // { fecha: '2026-11-07', hora: '20:00', titulo: 'Nombre del evento', descripcion: 'Qué se hace y cómo participar.' },
 ];
 
-// FOTOS (pestaña Comunidad). Sube antes la imagen a la carpeta fotos/ del repositorio. 'pie' es opcional.
-// En cada visita se eligen al azar FOTOS_VISIBLES de esta lista; si hay menos, el resto son marcos vacíos.
+// FOTOS (pestaña Comunidad). Esta lista la rellena GitHub Actions sola con lo que haya en la carpeta fotos/:
+// el pie de foto es el nombre del archivo sin extensión y con las _ cambiadas por espacios.
+// En cada visita se eligen al azar FOTOS_VISIBLES de la lista; si hay menos, el resto son marcos vacíos.
+// >>> FOTOS-AUTO-INICIO (lo genera GitHub Actions, no editar a mano)
 const FOTOS = [
-  { archivo: 'fotos/Aldea_og.jpg', pie:'Aldea og' },
-  // { archivo: 'fotos/mi-base.jpg', pie: 'Base de Fulano' },
+  { archivo: "fotos/Aldea_og.jpg", pie: "Aldea og" },
 ];
+// <<< FOTOS-AUTO-FIN
 const FOTOS_VISIBLES = 6;   // cuántos marcos tiene la galería
 
 // JUGADORES PREMIUM (agradecimiento de la página de inicio).
